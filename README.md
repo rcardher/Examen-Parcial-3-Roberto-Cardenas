@@ -1,3 +1,5 @@
+https://github.com/rcardher/Examen-Parcial-3-Roberto-Cardenas.git
+
 Condiciones de Entrega del Examen de Programación en C++
 
 Estimado estudiante,
