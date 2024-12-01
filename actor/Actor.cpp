@@ -1,53 +1,39 @@
-#include <vector>
-#include <string>
-#include <iostream>
-#include "../Tarea/Tarea.h"
+#include "Actor.h"
 
+Actor::Actor(std::string id, std::string descripcion) {
+    this->id = id;
+    this->descripcion = descripcion;
+    this->tiempoTotal = 0;
+    this->numTareas = 0;
+}
 
+std::string Actor::getId() const {
+    return id;
+}
 
+std::string Actor::getDesc() const {
+    return descripcion;
+}
 
-class Actor {       // The class
-private:
-    std::string id;// Access specifier
-    std::string descripcion ;
-    std::vector<Tarea> listaTareas;
-    int tiempoTotal;
-    int numTareas;
-    public:           // Access specifier
-    Actor(std::string id, std::string descripcion) {     // Constructor
-        this->id= id;
-        this->descripcion= descripcion;
-        this->tiempoTotal = 0;
-        this->numTareas = 0;
+int Actor::getNumTareas() const {
+    return numTareas;
+}
+
+int Actor::addTarea(Tarea t) {
+    if (this->getNumTareas() < 20) {
+        listaTareas.push_back(t); // Verifica que listaTareas esté correctamente declarado en Actor.h
+        numTareas++;
     }
+    return numTareas;
+}
 
-    std::string getId(){
-        return id;
+std::string Actor::toString() const {
+    std::string resul = "";
+    int duracionTotal = 0;
+    for (int i = 0; i < numTareas; i++) {
+        resul += "Tarea: " + std::to_string(i) + ": " + listaTareas[i].toString() + "\n";
+        duracionTotal += listaTareas[i].getDuracion();
     }
-    std::string getDesc(){
-        return descripcion;
-    }
+    return "Actor: " + descripcion + " Duracion Total: " + std::to_string(duracionTotal);
+}
 
-    int getNumTareas(){
-        return numTareas;
-    }
-
-    int addTarea(Tarea t){
-        if(this.getNumTareas()<20){
-            [numTareas]=t;
-            numTareas++;
-        }
-        return numTareas;
-    }
-
-    std::string toString(){
-        strin resul="";
-        int duracionTotal=0;
-        for(int i=0; i<numTareas;i++){
-            resul+="Tarea: " + to_std::string(i) + ": " + listaTareas[i].toString() + "\n"
-            duracionTotal += listaTareas[i].getDuracion()
-        }
-        return ("Tarea: " + descripcion + " Duracion: " + to_std::string(duracion) + "duracionTotal: " + duracionTotal) ;
-    }
-
-};

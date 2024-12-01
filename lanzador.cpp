@@ -2,144 +2,87 @@
 // Created by Roberto C on 30/11/24.
 //
 #include "lanzador.h"
+#include "../tarea/Tarea.h" // Asegúrate de que la ruta sea correcta
+#include "Actor.h"
 #include <iostream>
-#include <iomanip>
-#include <unordered_map>
-#include <algorithm>
-#include <sstream>
-#include <stdexcept>
+#include <vector>
 
-using namespace std;
+// Ejemplo de almacenamiento de actores y tareas
+std::vector<Actor> actores;
 
-vector<Tarea> Lanzador::crearTareas() {
-    return {
-        Tarea("A", "Reserva de vuelo", 20),
-        Tarea("B", "Informar a casa para empacar", 5),
-        Tarea("C", "Empacar maletas", 40),
-        Tarea("D", "Preparacion del billete por la agencia", 10),
-        Tarea("E", "Recoger el billete de la agencia", 5),
-        Tarea("F", "Llevar el billete a la oficina", 10),
-        Tarea("G", "Recoger las maletas de casa", 20),
-        Tarea("H", "Llevar maletas a la oficina", 25),
-        Tarea("I", "Conversacion sobre documentos requeridos", 35),
-        Tarea("J", "Dictar instrucciones para ausencia", 25),
-        Tarea("K", "Reunir documentos", 15),
-        Tarea("L", "Organizar documentos", 5),
-        Tarea("M", "Viajar al aeropuerto y facturar", 25)
-    };
-}
+void agregarTareaAlActor() {
+    std::string actorId, tareaId, tareaDesc;
+    int duracion;
 
-void Lanzador::crearActoresConInput() {
-    int numActores;
-    cout << "Ingrese el numero de actores: ";
-    if (!(cin >> numActores)) {
-        throw runtime_error("Error al leer el numero de actores.");
-    }
-    cin.ignore();
+    std::cout << "Ingrese el ID del actor: ";
+    std::getline(std::cin, actorId);
 
-    for (int i = 0; i < numActores; ++i) {
-        string id, descripcion;
-        cout << "Ingrese el ID del actor " << i + 1 << ": ";
-        if (!getline(cin, id)) {
-            throw runtime_error("Error al leer el ID del actor.");
-        }
-        cout << "Ingrese la descripcion del actor " << i + 1 << ": ";
-        if (!getline(cin, descripcion)) {
-            throw runtime_error("Error al leer la descripcion del actor.");
-        }
-        actores.emplace_back(id, descripcion);
-    }
-}
-
-void Lanzador::asignarTareasConInput() {
+    // Buscar el actor por ID
     for (auto& actor : actores) {
-        while (true) {
-            string respuesta;
-            cout << "¿Quieres asignarle una nueva tarea al actor " << actor.getDescripcion() << "? (s/n): ";
-            if (!getline(cin, respuesta)) {
-                throw runtime_error("Error al leer la respuesta.");
-            }
+        if (actor.getId() == actorId) {
+            std::cout << "Ingrese el ID de la tarea: ";
+            std::getline(std::cin, tareaId);
+            std::cout << "Ingrese la descripción de la tarea: ";
+            std::getline(std::cin, tareaDesc);
+            std::cout << "Ingrese la duración de la tarea (en minutos): ";
+            std::cin >> duracion;
+            std::cin.ignore(); // Ignorar el salto de línea después de ingresar la duración
 
-            if (respuesta != "s" && respuesta != "S") {
-                break;
-            }
-
-            string tareaId;
-            cout << "Ingrese el ID de la tarea para el actor " << actor.getDescripcion() << ": ";
-            if (!getline(cin, tareaId)) {
-                throw runtime_error("Error al leer el ID de la tarea.");
-            }
-
-            auto it = find_if(tareas.begin(), tareas.end(), [&tareaId](const Tarea& tarea) {
-                return tarea.getId() == tareaId;
-            });
-
-            if (it != tareas.end()) {
-                actor.addTarea(*it);
-            } else {
-                cout << "Tarea con ID " << tareaId << " no encontrada." << endl;
-            }
+            Tarea tarea(tareaId, tareaDesc, duracion);
+            actor.addTarea(tarea);
+            std::cout << "Tarea agregada al actor." << std::endl;
+            return;
         }
+    }
+    std::cout << "Actor no encontrado." << std::endl;
+}
+
+void listarTareas() {
+    for (const auto& actor : actores) {
+        std::cout << actor.toString() << std::endl;
     }
 }
 
-void Lanzador::ejecutar() {
-    try {
-        tareas = crearTareas();
-        crearActoresConInput();
-        asignarTareasConInput();
+void agregarActor() {
+    std::string id, descripcion;
+    std::cout << "Ingrese el ID del actor: ";
+    std::getline(std::cin, id);
+    std::cout << "Ingrese la descripción del actor: ";
+    std::getline(std::cin, descripcion);
 
-        unordered_map<string, int> taskEndTimes;
-        int tiempoTotal = 0;
-
-        cout << "=== Resumen de tareas por actor ===" << endl;
-
-        for (const auto& actor : actores) {
-            cout << "Actor: " << actor.getDescripcion() << endl;
-            cout << actor.tostring();
-            int currentTime = 0;
-            for (const auto& tarea : actor.getTareas()) {
-                int startTime = currentTime;
-                if (taskEndTimes.find(tarea.getId()) != taskEndTimes.end()) {
-                    startTime = max(startTime, taskEndTimes[tarea.getId()]);
-                }
-                int endTime = startTime + tarea.getDuracion();
-                taskEndTimes[tarea.getId()] = endTime;
-                currentTime = endTime;
-            }
-            cout << "Tiempo total para " << actor.getDescripcion() << ": " << currentTime << " minutos" << endl;
-            tiempoTotal = max(tiempoTotal, currentTime);
-            cout << "----------------------------------" << endl;
-        }
-
-        cout << "=== Tiempo total para completar todas las tareas ===" << endl;
-        cout << "Tiempo total: " << tiempoTotal << " minutos" << endl;
-
-        cout << "\n=== Verificacion de tiempos ===" << endl;
-        for (const auto& actor : actores) {
-            if (actor.getDuracionTotal() > 100) {
-                cout << "El actor " << actor.getDescripcion() << " NO puede completar sus tareas a tiempo." << endl;
-            } else {
-                cout << "El actor " << actor.getDescripcion() << " puede completar sus tareas a tiempo." << endl;
-            }
-        }
-    } catch (const exception& e) {
-        cerr << "Error: " << e.what() << endl;
-    }
+    Actor actor(id, descripcion);
+    actores.push_back(actor);
+    std::cout << "Actor agregado." << std::endl;
 }
 
-void Lanzador::imprimirTareas() {
-    cout << "=== Lista de tareas ===" << endl;
-    for (const auto& tarea : tareas) {
-        cout << tarea.toString() << endl;
+void modificarActor() {
+    std::string actorId, nuevaDescripcion;
+    std::cout << "Ingrese el ID del actor a modificar: ";
+    std::getline(std::cin, actorId);
+
+    for (auto& actor : actores) {
+        if (actor.getId() == actorId) {
+            std::cout << "Ingrese la nueva descripción del actor: ";
+            std::getline(std::cin, nuevaDescripcion);
+            actor = Actor(actor.getId(), nuevaDescripcion); // Crear un nuevo objeto Actor con la nueva descripción
+            std::cout << "Actor modificado." << std::endl;
+            return;
+        }
     }
-    cout << "=======================" << endl;
+    std::cout << "Actor no encontrado." << std::endl;
 }
 
-Lanzador::Launcher() {
-    try {
-        tareas = crearTareas();
-    } catch (const exception& e) {
-        cerr << "Error al crear tareas: " << e.what() << endl;
+void eliminarActor() {
+    std::string actorId;
+    std::cout << "Ingrese el ID del actor a eliminar: ";
+    std::getline(std::cin, actorId);
+
+    for (auto it = actores.begin(); it != actores.end(); ++it) {
+        if (it->getId() == actorId) {
+            actores.erase(it);
+            std::cout << "Actor eliminado." << std::endl;
+            return;
+        }
     }
+    std::cout << "Actor no encontrado." << std::endl;
 }
