@@ -5,9 +5,10 @@
 #ifndef CRUD_H
 #define CRUD_H
 
-bool crear();
-auto leer();
-bool actualizar();
-bool borrar();
+bool crear(); // Función para crear algo
+auto leer();  // Función para leer algo
+bool actualizar(); // Función para actualizar algo
+bool borrar(); // Función para borrar algo
 
 #endif // CRUD_H
+

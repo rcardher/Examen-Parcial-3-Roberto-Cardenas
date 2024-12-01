@@ -5,16 +5,18 @@
 #include <string>
 #include <vector>
 #include "Actor.h"
-#include "../Tarea/Tarea.h" // Asegúrate de que la ruta sea correcta
+#include "../Tarea/Tarea.h" // Ruta al archivo de Tarea
 
 int main() {
-    std::vector<Actor> actores;
+    std::vector<Actor> actores; // Lista de actores
     int numActores;
 
+    // Solicitar el número de actores
     std::cout << "Ingrese el número de actores: ";
     std::cin >> numActores;
-    std::cin.ignore(); // Ignorar el salto de línea después de ingresar el número
+    std::cin.ignore(); // Limpiar el buffer de entrada
 
+    // Ciclo para ingresar los actores
     for (int i = 0; i < numActores; ++i) {
         std::string id, descripcion;
         std::cout << "Ingrese el ID del actor " << i + 1 << ": ";
@@ -22,14 +24,15 @@ int main() {
         std::cout << "Ingrese la descripción del actor " << i + 1 << ": ";
         std::getline(std::cin, descripcion);
 
-        Actor actor(id, descripcion);
-        actores.push_back(actor);
+        Actor actor(id, descripcion); // Crear el actor
+        actores.push_back(actor); // Agregar el actor a la lista
 
         int numTareas;
         std::cout << "Ingrese el número de tareas para el actor " << i + 1 << ": ";
         std::cin >> numTareas;
-        std::cin.ignore(); // Ignorar el salto de línea después de ingresar el número
+        std::cin.ignore(); // Limpiar el buffer de entrada
 
+        // Ciclo para ingresar las tareas de cada actor
         for (int j = 0; j < numTareas; ++j) {
             std::string tareaId, tareaDesc;
             int duracion;
@@ -39,17 +42,20 @@ int main() {
             std::getline(std::cin, tareaDesc);
             std::cout << "Ingrese la duración de la tarea " << j + 1 << " (en minutos): ";
             std::cin >> duracion;
-            std::cin.ignore(); // Ignorar el salto de línea después de ingresar la duración
+            std::cin.ignore(); // Limpiar el buffer de entrada
 
-            Tarea tarea(tareaId, tareaDesc, duracion);
-            actores[i].addTarea(tarea);
+            Tarea tarea(tareaId, tareaDesc, duracion); // Crear la tarea
+            actores[i].addTarea(tarea); // Agregar la tarea al actor
         }
     }
 
-    // Mostrar información de todos los actores y sus tareas
+    // Mostrar la información de todos los actores y sus tareas
     for (const auto& actor : actores) {
         std::cout << actor.toString() << std::endl;
     }
 
-    return 0;
+    return 0; // Finalizar el programa
 }
+
+
+//Fuente utilizada:Copilot
